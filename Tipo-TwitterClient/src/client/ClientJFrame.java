@@ -218,7 +218,7 @@ public class ClientJFrame extends javax.swing.JFrame {
 
 
     /**
-    * Método - enviarMenssagemMouseClicked:
+    * Método - deixarDeSeguirMouseClicked:
     *   É uma função relativa ao botão de parar seguir o Servidor
     *
     *   @param evt Evento do click no Botão
