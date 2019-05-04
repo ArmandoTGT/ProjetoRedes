@@ -24,8 +24,8 @@ import javax.swing.JTextField;
 
 /**
 * CLASSE - TClient (Thread of Client):
-*   Representa um Cliente em execução (sua Thread), tendo também as funções 
-*   de leitura e escrita dos dados
+*   Representa um Cliente em execução (sua Thread) na Pool do Servidor, 
+*   tendo também as funções de leitura e escrita dos dados
 *
 *   @author  Drayton Corrêa Filho
 *   @author  Armando de Souza Salvador Neto

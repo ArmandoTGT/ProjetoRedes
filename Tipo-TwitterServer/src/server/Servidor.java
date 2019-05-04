@@ -17,19 +17,29 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Servidor {
 
+/**
+* CLASSE - Servidor:
+*   Representa o Servidor da aplicação, ficando em espera para
+*   receber novos Clientes e fazendo tanto o controle do estabelecimento 
+*   de conexão via Socket com eles quanto a inicialização da Thread que
+*   representará eles na Pool de Threads
+*
+*   @author  Mikaelly Felício Pedrosa
+*   @since   29-04-2019 
+*/
+public class Servidor {
     public static void main(String args[]) throws IOException {
-       
-        //Cria o noo Pool de Threads para os nossos clientes
+        //Cria o novo Pool de Threads para os nossos clientes
         ExecutorService piscina = Executors.newCachedThreadPool();
 
         try {
             //Inicia o servidor na porta 3322
             ServerSocket server = new ServerSocket(3322);
             System.out.println("Servidor iniciado na porta 3322");
+
             while (true) {
-                //Socket fica em LISTENIN
+                //Socket fica em LISTEN
                 Socket cliente = server.accept();
                 System.out.println("Cliente conectado do IP " + cliente.getInetAddress().getHostAddress()
                         + " e na porta " + cliente.getPort());                
@@ -39,10 +49,6 @@ public class Servidor {
 
         } catch (IOException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
-
         }
-
-    }
-
-    
+    } 
 }
