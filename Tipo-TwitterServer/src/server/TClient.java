@@ -20,12 +20,11 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextField;
-import static server.Servidor.onlines;
 
 
 /**
 * CLASSE - TClient (Thread of Client):
-*   Representa um Cliente em execução (sua Thread) na Pool do Servidor, 
+*   Representa um Cliente em execução (sua Thread) na Pool de Threads do Servidor, 
 *   tendo também as funções de leitura e escrita dos dados
 *
 *   @author  Drayton Corrêa Filho
@@ -76,7 +75,7 @@ public class TClient implements Runnable {
             //Checa se o IP conectado é de algum seguidor ou um IP novo
             if(seguidores.get(cliente.getInetAddress().getHostAddress()) == null){
                //Se for novo ele vai enviar 0 e receber o nick 
-               //dele, depois ele salva no hash junto com o ip e porta dele
+               //dele, depois ele salva no hash junto com o IP e porta dele
                sem.acquire();   //Usa o semáforo para apenas um thread acessar por vez
                saida.writeUTF("0");
                String[] entradas = new String[2];
@@ -85,8 +84,8 @@ public class TClient implements Runnable {
                seguidores.put(cliente.getInetAddress().getHostAddress(), entradas);
                sem.release();   //Libera o semáforo para voltar a ser paralelo
             }else{
-               //Se o IP for de um seguidor ele envia 
-               //o nick para ele e atualiza a porta que ele se conectou
+               //Se o IP for de um seguidor, ele envia 
+               //o nick para e atualiza a porta que ele se conectou
                sem.acquire();   //Usa o semáforo para apenas um thread acessar por vez
                saida.writeUTF(seguidores.get(cliente.getInetAddress().getHostAddress())[1]);
                seguidores.get(cliente.getInetAddress().getHostAddress())[0] = String.valueOf(cliente.getPort());
@@ -94,7 +93,6 @@ public class TClient implements Runnable {
             }    
 
             sem.acquire();   //Usa o semáforo para apenas um thread acessar por vez
-            onlines.put(seguidores.get(cliente.getInetAddress().getHostAddress())[1], saida);
             //Escreve o novo seguidor no arquivo de seguidores
             writeInFile(seguidoresFile, formatHashToWrite(seguidores));
             //Pega as menssagens que ja foram publicadas que mostra pro novo cliente
@@ -126,7 +124,6 @@ public class TClient implements Runnable {
                     //Se for ele tira o seguidor do hash de seguidores, retira ele do arquivo e depois desconecta o cliente
                     seguidores.remove(cliente.getInetAddress().getHostAddress());
                     saida.writeUTF("Voçê deixou de seguir o servidor");
-                    sem.release();
                     writeInFile(seguidoresFile, formatHashToWrite(seguidores));
                     cliente.close();             
                 }
@@ -135,7 +132,6 @@ public class TClient implements Runnable {
                 if(menssagem.equals("Console:ATTALLMENSSAGE:1B71")){
                     // Se for, enviamos as mensagens atualizadas
                     saida.writeUTF(String.join("\n\n", readFile(menssagensFile)));
-                    sem.release();
                 }else{
                     //Caso contrário, adicionamos o remetente e a Data/hora a mensagem
                     String nMenssagem = "@" + seguidores.get(cliente.getInetAddress().getHostAddress())[1] + ": " +
@@ -192,6 +188,9 @@ public class TClient implements Runnable {
     * 
     *   @param filename É o nome do arquivo aonde sera salvo os dados
     *   @param x Array cujos dados serão salvos no arquivo
+    *
+    *   @exception IOException Em caso de erro ao tentar acessar o arquivo
+    *   @see IOException
     */
     public static void writeInFile(String filename, String[] x) throws IOException{               
         try (BufferedWriter outputWriter = new BufferedWriter(new FileWriter(filename))) {
@@ -212,6 +211,10 @@ public class TClient implements Runnable {
     * 
     *   @param filename É o nome do arquivo aonde sera salvo os dados
     *   @return String[] O Array aonde as linhas do arquivo serão salvas
+    *
+    *   @exception FileNotFoundException Em caso de erro ao tentar buscar o arquivo
+    *   @exception IOException Em caso de erro ao tentar acessar o arquivo
+    *   @see IOException
     */
     public String[] readFile(String filename) throws FileNotFoundException, IOException{
         try(BufferedReader reader = new BufferedReader(new FileReader(filename))) {
