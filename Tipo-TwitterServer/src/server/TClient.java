@@ -20,6 +20,7 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextField;
+import static server.Servidor.onlines;
 
 
 /**
@@ -93,6 +94,7 @@ public class TClient implements Runnable {
             }    
 
             sem.acquire();   //Usa o semáforo para apenas um thread acessar por vez
+            onlines.put(seguidores.get(cliente.getInetAddress().getHostAddress())[1], saida);
             //Escreve o novo seguidor no arquivo de seguidores
             writeInFile(seguidoresFile, formatHashToWrite(seguidores));
             //Pega as menssagens que ja foram publicadas que mostra pro novo cliente
@@ -124,6 +126,7 @@ public class TClient implements Runnable {
                     //Se for ele tira o seguidor do hash de seguidores, retira ele do arquivo e depois desconecta o cliente
                     seguidores.remove(cliente.getInetAddress().getHostAddress());
                     saida.writeUTF("Voçê deixou de seguir o servidor");
+                    sem.release();
                     writeInFile(seguidoresFile, formatHashToWrite(seguidores));
                     cliente.close();             
                 }
@@ -132,6 +135,7 @@ public class TClient implements Runnable {
                 if(menssagem.equals("Console:ATTALLMENSSAGE:1B71")){
                     // Se for, enviamos as mensagens atualizadas
                     saida.writeUTF(String.join("\n\n", readFile(menssagensFile)));
+                    sem.release();
                 }else{
                     //Caso contrário, adicionamos o remetente e a Data/hora a mensagem
                     String nMenssagem = "@" + seguidores.get(cliente.getInetAddress().getHostAddress())[1] + ": " +
