@@ -21,3 +21,7 @@
 @tgt: 3(Enviado em: 05/05/2019, 21:04:51)
 @tgt: 4(Enviado em: 05/05/2019, 21:04:59)
 @tgt: 5(Enviado em: 05/05/2019, 21:05:03)
+@ServidorTipo-Twitter: aaaaa(Enviado em: 05/05/2019, 22:01:16)
+@tgt: novoteste(Enviado em: 05/05/2019, 22:05:53)
+@tgt: novoteste1(Enviado em: 05/05/2019, 22:06:05)
+@ServidorTipo-Twitter: lalallalal(Enviado em: 05/05/2019, 22:06:12)
